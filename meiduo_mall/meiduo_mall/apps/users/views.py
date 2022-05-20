@@ -3,7 +3,9 @@ from django.views import View
 from users.models import User
 import json, re
 from django_redis import get_redis_connection
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate, logout
+# from meiduo_mall.utils.view import login_status
+# from django.utils.decorators import method_decorator
 
 
 class UsernameCountView(View):
@@ -102,10 +104,65 @@ class RegisterView(View):
                 'errmsg': '保存数据库出错'
             })
         login(request, user)
-
         response = JsonResponse({
             'code': 0,
             'errmsg': 'OK'
         })
-        response.set_cookie('username',username,max_age=3600*24*14)
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 14)
+
         return response
+
+
+class LoginView(View):
+    def post(self, request):
+        dict = json.loads(request.body.decode())
+        username = dict.get('username')
+        password = dict.get('password')
+        remembered = dict.get('remembered')
+        if not all([username, password]):
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '缺少必要传参'
+            })
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '用户名或密码有误'
+            })
+        login(request, user)
+        if remembered != True:
+            request.session.set_expiry(0)
+        else:
+            request.session.set_expiry(None)
+        response = JsonResponse({
+            'code': 0,
+            'errmsg': 'ok'
+        })
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 14)
+        return response
+
+
+class LogoutView(View):
+    def delete(self, request):
+        logout(request)
+        response = JsonResponse({
+            'code': 0,
+            'errmsg': 'ok'
+        })
+        response.delete_cookie('username')
+        return response
+
+
+class UserInfoView(View):
+    pass
+#     @method_decorator(login_status)
+#     def get(self, request):
+#         user = request.user
+#         return JsonResponse({
+#             'code': 0,
+#             'errmsg': 'ok',
+#             'info_data': {'username':user.username,
+#                           'mobile':
+#                 }
+#         })

@@ -6,5 +6,8 @@ urlpatterns = {
     re_path('^usernames/(?P<username>\w{5,20})/count/$', UsernameCountView.as_view()),
     re_path('^mobiles/(?P<mobile>1[3-9]\d{9})/count/$', MobileCountView.as_view()),
     re_path('^register/$', RegisterView.as_view()),
+    re_path('^login/$', LoginView.as_view()),
+    re_path('^logout/$', LogoutView.as_view()),
+    re_path('^info/$', LogoutView.as_view()),
 
 }

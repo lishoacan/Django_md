@@ -203,5 +203,16 @@ CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:8080',
     'http://localhost:8080',
     'http://www.meiduo.site:8080',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://www.meiduo.site:8000',
+    'http://192.168.0.6:8080',
+    'http://192.168.0.6:8000',
 )
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
+CORS_ORIGIN_ALLOW_ALL = True   # 允许所有主机跨域
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# 指定自定义的用户认证后端:
+AUTHENTICATION_BACKENDS = ['users.utils.UserMobileAuthBackend']
